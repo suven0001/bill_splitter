@@ -2,10 +2,15 @@ package com.apt.billsplitter.business.impl;
 
 import com.apt.billsplitter.business.AptBillSplitter;
 import com.apt.billsplitter.datamodel.domain.LoginMessage;
+import com.apt.billsplitter.datamodel.emums.VerificationMessageEnum;
 import com.apt.billsplitter.entity.AptUser;
 import com.apt.billsplitter.service.AptUserService;
+import com.apt.billsplitter.service.EmailService;
+import jakarta.mail.internet.MimeMessage;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Component;
 
 @Slf4j
@@ -14,6 +19,9 @@ public class AptBillSplitterImpl implements AptBillSplitter {
 
     @Autowired
     private AptUserService aptUserService;
+
+    @Autowired
+    private EmailService emailService;
 
     @Override
     public LoginMessage registerNewMessage(AptUser aptUser) {
@@ -45,5 +53,32 @@ public class AptBillSplitterImpl implements AptBillSplitter {
             loginMessage.setErrorStatus(true);
         }
         return loginMessage;
+    }
+
+    @Override
+    public String sendActivationCode(String email, String phoneNumber) {
+        String subject = "Activation code";
+        String body = "AptBillSplitter-Activation code: " + generateActivationCode();
+        if (email != null && !email.isEmpty()) {
+            boolean isEmailSent = emailService.sendEmail(email, subject, body);
+            if (isEmailSent)
+                return VerificationMessageEnum.SUCCESS.getMessage();
+            else
+                return VerificationMessageEnum.FAILURE.getMessage();
+        } else if (phoneNumber != null && !phoneNumber.isEmpty()) {
+            //send sms
+            return generateActivationCode();
+        } else {
+            return VerificationMessageEnum.NOT_ACTIVATED.getMessage();
+        }
+    }
+
+    @Override
+    public boolean verifyActivationCode(String activationCode, String email, String phoneNumber) {
+        return false;
+    }
+
+    private String generateActivationCode() {
+        return String.valueOf(System.currentTimeMillis());
     }
 }

@@ -5,10 +5,7 @@ import com.apt.billsplitter.datamodel.domain.LoginMessage;
 import com.apt.billsplitter.entity.AptUser;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
@@ -17,6 +14,20 @@ public class UserController {
 
     @Autowired
     private AptBillSplitter aptBillSplitter;
+
+    @PostMapping("send/code/activation")
+    public String sendActivationCode(@RequestParam String email, @RequestParam String phoneNumber) {
+        log.info("sending activation code for: {}", email);
+        return aptBillSplitter.sendActivationCode(email, phoneNumber);
+    }
+
+    @PostMapping("send/code/verify")
+    public String checkIfVerificationCodeIsValid(@RequestParam String activationCode,
+                                                 @RequestParam String email, @RequestParam String phoneNumber) {
+        log.info("sending verification for user with email {} and phone number: {}", email, phoneNumber);
+//        return aptBillSplitter.verifyActivationCode(activationCode, email, phoneNumber);
+        return "true";
+    }
 
 
     @PostMapping(value = "register", consumes = "application/json")
