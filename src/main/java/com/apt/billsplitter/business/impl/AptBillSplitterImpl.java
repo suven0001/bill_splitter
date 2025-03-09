@@ -6,12 +6,11 @@ import com.apt.billsplitter.datamodel.emums.VerificationMessageEnum;
 import com.apt.billsplitter.entity.AptUser;
 import com.apt.billsplitter.service.AptUserService;
 import com.apt.billsplitter.service.EmailService;
-import jakarta.mail.internet.MimeMessage;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Component;
+
+import java.util.Random;
 
 @Slf4j
 @Component
@@ -79,6 +78,8 @@ public class AptBillSplitterImpl implements AptBillSplitter {
     }
 
     private String generateActivationCode() {
-        return String.valueOf(System.currentTimeMillis());
+        Random rand = new Random();
+        int activationCode = 100000 + rand.nextInt(900000);
+        return String.valueOf(activationCode);
     }
 }

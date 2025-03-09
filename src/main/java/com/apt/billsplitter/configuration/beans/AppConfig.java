@@ -14,9 +14,4 @@ public class AppConfig {
     public AptBillSplitter aptBillSplitter() {
         return new AptBillSplitterImpl();
     }
-
-//    @Bean
-//    public JavaMailSender javaMailSender() {
-//        return new JavaMailSenderImpl();
-//    }
 }
